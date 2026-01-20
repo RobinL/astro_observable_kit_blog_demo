@@ -3,8 +3,10 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "predev": "pnpm -s build:notebooks",
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "pnpm -s build:notebooks",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -22,7 +24,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@my-site/notebook-builder": "workspace:*",
+    "notebook-to-lib": "workspace:*",
     "tsx": "^4.21.0",
     "typescript": "^5.7.3"
   }

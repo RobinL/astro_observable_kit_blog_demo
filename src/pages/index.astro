@@ -41,30 +41,45 @@
     </style>
 </head>
 <body>
-    <h1>Diff Match Patch Demo</h1>
+    <div id="cell-1"></div>
 
     <div class="grid">
         <div class="card">
             <h3>Input 1</h3>
-            <div id="target-one"></div>
+            <div data-cell="one"></div>
         </div>
         <div class="card">
             <h3>Input 2</h3>
-            <div id="target-other"></div>
+            <div data-cell="other"></div>
         </div>
     </div>
 
     <div class="card">
         <h3>Result</h3>
-        <div id="target-result"></div>
+        <div data-cell="diffResult"></div>
     </div>
 
-    <script>
-        // Astro will bundle this with Vite, resolving the import
-        import * as notebook from 'hello-world-diff-demo';
+    <!-- Any unmatched cells will be appended here in document order -->
+    <div id="notebook"></div>
 
-        console.log('Notebook loaded:', notebook);
-        console.log('Keys:', Object.keys(notebook));
+    <script>
+        // Astro will bundle this with Vite, resolving the workspace import
+        import { mount } from 'hello-world-diff-demo';
+
+        let currentRuntime;
+
+        function mountNotebook() {
+            try {
+                // Dispose any previous runtime (HMR / remount safety)
+                if (currentRuntime) currentRuntime.dispose();
+
+                const container = document.getElementById('notebook') ?? document.body;
+                const { runtime } = mount(container);
+                currentRuntime = runtime;
+            } catch (err) {
+                console.error('Error mounting notebook:', err);
+            }
+        }
 
         // Wait for DOM to be ready
         if (document.readyState === 'loading') {
@@ -73,26 +88,11 @@
             mountNotebook();
         }
 
-        function mountNotebook() {
-            const targets = {
-                "one": document.getElementById("target-one"),
-                "other": document.getElementById("target-other"),
-                "out": document.getElementById("target-result")
-            };
-
-            try {
-                if (notebook.mount) {
-                    notebook.mount(document.body, {
-                        targets,
-                        appendUnmatched: false
-                    });
-                    console.log('Notebook mounted successfully');
-                } else {
-                    console.error('mount function not found in notebook');
-                }
-            } catch (err) {
-                console.error('Error mounting notebook:', err);
-            }
+        // HMR cleanup
+        if (import.meta.hot) {
+            import.meta.hot.dispose(() => {
+                if (currentRuntime) currentRuntime.dispose();
+            });
         }
     </script>
 </body>

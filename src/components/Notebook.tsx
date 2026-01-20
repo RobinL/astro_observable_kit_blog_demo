@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 interface Props {
   moduleName: string;
-  targets?: Record<string, string>; // Map Observable Names -> DOM IDs
+  containerId?: string;
 }
 
-export default function Notebook({ moduleName, targets }: Props) {
+export default function Notebook({ moduleName, containerId }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -19,19 +19,10 @@ export default function Notebook({ moduleName, targets }: Props) {
         console.log('Notebook module loaded:', notebook);
         console.log('Available keys:', Object.keys(notebook));
 
-        // Use the mount function if available
-        if (notebook.mount && targets) {
-          const targetElements: Record<string, Element> = {};
-          for (const [name, id] of Object.entries(targets)) {
-            const el = document.getElementById(id);
-            if (el) targetElements[name] = el;
-          }
-
-          const { runtime, main } = notebook.mount(document.body, {
-            targets: targetElements,
-            appendUnmatched: false
-          });
-
+        // Prefer mount() (canonical per-cell notebook-kit semantics)
+        if (notebook.mount) {
+          const container = (containerId && document.getElementById(containerId)) || document.body;
+          const { runtime } = notebook.mount(container);
           cleanup = () => runtime.dispose();
           return;
         }
@@ -44,15 +35,7 @@ export default function Notebook({ moduleName, targets }: Props) {
 
         const runtime = new notebook.Runtime(notebook.createLibrary());
 
-        runtime.module(notebook.default, (name: string) => {
-          if (targets && targets[name]) {
-            const targetId = targets[name];
-            const el = document.getElementById(targetId);
-            if (el) return new notebook.Inspector(el);
-          }
-
-          return true; // Run calculation but don't display
-        });
+        runtime.module(notebook.default, () => true); // Run calculation but don't display
 
         cleanup = () => runtime.dispose();
       } catch (err) {
@@ -66,7 +49,7 @@ export default function Notebook({ moduleName, targets }: Props) {
     return () => {
       if (cleanup) cleanup();
     };
-  }, [moduleName, targets]);
+  }, [moduleName, containerId]);
 
   if (error) {
     return <div style={{ color: 'red', padding: '20px' }}>Error loading notebook: {error}</div>;

@@ -12,7 +12,7 @@
     "src"
   ],
   "scripts": {
-    "build": "tsx ../../notebook-builder/src/index.ts ./notebook.html --out ."
+    "build": "tsx ../../notebook-builder/bin/convert.ts ./notebook.html --out ."
   },
   "dependencies": {
     "@observablehq/runtime": "^5.0.0",
