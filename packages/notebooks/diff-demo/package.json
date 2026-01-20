@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "description": "Converted Observable Notebook",
   "type": "module",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./dist/index.js"
   },
   "sideEffects": false,
   "files": [
+    "dist",
     "src"
   ],
   "scripts": {
@@ -20,7 +21,7 @@
     "@observablehq/inspector": "latest",
     "@observablehq/stdlib": "latest",
     "@observablehq/inputs": "latest",
-    "my-custom-lib": "workspace:*",
-    "diff-match-patch": "latest"
+    "diff-match-patch": "latest",
+    "top-level-package-test": "workspace:*"
   }
 }

@@ -132,13 +132,13 @@ function buildOnce(inputFile: string, options: Options) {
     }
 
     const outDir = path.resolve(process.cwd(), options.out ?? inferredName);
-    const srcDir = path.join(outDir, "src");
-    fs.mkdirSync(srcDir, { recursive: true });
+    const distDir = path.join(outDir, "dist");
+    fs.mkdirSync(distDir, { recursive: true });
 
     // Always (re)generate JS artifacts.
-    fs.writeFileSync(path.join(srcDir, "define.js"), generateDefineJs(processedCells));
-    fs.writeFileSync(path.join(srcDir, "runtime.js"), generateRuntimeJs());
-    fs.writeFileSync(path.join(srcDir, "index.js"), generateIndexJs());
+    fs.writeFileSync(path.join(distDir, "define.js"), generateDefineJs(processedCells));
+    fs.writeFileSync(path.join(distDir, "runtime.js"), generateRuntimeJs());
+    fs.writeFileSync(path.join(distDir, "index.js"), generateIndexJs());
 
     // package.json handling:
     // - if none exists, create a minimal one
@@ -158,7 +158,7 @@ function buildOnce(inputFile: string, options: Options) {
 
         // Ensure module basics for Vite/Node.
         nextPkg.type = nextPkg.type ?? "module";
-        nextPkg.main = nextPkg.main ?? "src/index.js";
+        nextPkg.main = nextPkg.main ?? "dist/index.js";
 
         // Merge dependencies:
         // - Preserve user-specified versions by default

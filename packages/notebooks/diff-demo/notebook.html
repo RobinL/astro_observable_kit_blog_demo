@@ -44,10 +44,16 @@
   </script>
 
   <script id="5" type="module" output="message">
-    import hello_world from "my-custom-lib";
+    import hello_world from "./src/hello.js";
 
     const message = hello_world();
     display(message);
+  </script>
+
+  <script id="6" type="module">
+    import hello_from_top_level from "top-level-package-test";
+
+    display(hello_from_top_level());
   </script>
 
 </notebook>

@@ -49,8 +49,6 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
-  packages/my-custom-lib: {}
-
   packages/notebook-builder:
     dependencies:
       '@observablehq/notebook-kit':
@@ -99,9 +97,11 @@ importers:
       diff-match-patch:
         specifier: latest
         version: 1.0.5
-      my-custom-lib:
+      top-level-package-test:
         specifier: workspace:*
-        version: link:../../my-custom-lib
+        version: link:../../top-level-package-test
+
+  packages/top-level-package-test: {}
 
 packages:
 

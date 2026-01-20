@@ -472,8 +472,8 @@ export function generatePackageJson(
     version: "0.1.0",
     description: "Converted Observable Notebook",
     type: "module",
-    main: "src/index.js",
-    files: ["src"],
+    main: "dist/index.js",
+    files: ["dist"],
     dependencies: depsObj
   }, null, 2);
 }

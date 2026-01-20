@@ -12,6 +12,10 @@ const NPM_IMPORT_REGEX = /["']npm:((?:@[a-z0-9-._]+\/)?[a-z0-9-._]+)(@[^"']*)?["
 // Matches: import ... from "package" or import("package")
 const IMPORT_FROM_REGEX = /(?:from|import\()\s*["']([^./"'][^"']*?)["']/g;
 
+// Regex to capture relative imports (starting with ./ or ../)
+// Used to adjust paths when generated code is placed in a subdirectory (dist/)
+const RELATIVE_IMPORT_REGEX = /((?:from|import\()\s*["'])(\.\.?\/[^"']*)(["'])/g;
+
 export function rewriteImports(source: string): ImportAnalysis {
     const dependencies = new Set<string>();
     const dependencySpecs: Record<string, string> = {};
@@ -24,6 +28,15 @@ export function rewriteImports(source: string): ImportAnalysis {
             dependencySpecs[pkgName] = version.slice(1);
         }
         return `"${pkgName}"`;
+    });
+
+    // Adjust relative imports to account for generated code being in dist/
+    // ./src/foo.js -> ../src/foo.js (go up one level from dist/)
+    // ../lib/bar.js -> ../../lib/bar.js
+    cleanedSource = cleanedSource.replace(RELATIVE_IMPORT_REGEX, (match, prefix, path, suffix) => {
+        // Prepend ../ to go up from dist/ to the package root
+        const adjustedPath = "../" + path.replace(/^\.\//, "");
+        return `${prefix}${adjustedPath}${suffix}`;
     });
 
     // Then detect all bare specifiers (including those already without npm: prefix)
