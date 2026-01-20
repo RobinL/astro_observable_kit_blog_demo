@@ -1,0 +1,71 @@
+---
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/hello-world', label: 'Hello World (MDX)' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="/">new_astro_blog</a>
+
+    <nav aria-label="Main">
+      {navItems.map((item) => (
+        <a
+          class={currentPath === item.href ? 'nav-link active' : 'nav-link'}
+          href={item.href}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 20px;
+  }
+
+  .brand {
+    font-weight: 650;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  nav {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: #1f2937;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+
+  .nav-link:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .nav-link.active {
+    background: rgba(0, 102, 204, 0.12);
+    color: #004f99;
+  }
+</style>

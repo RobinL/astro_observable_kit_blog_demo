@@ -1,0 +1,25 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <small>© {year} new_astro_blog</small>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 32px;
+    padding: 16px 0;
+    color: rgba(0, 0, 0, 0.65);
+    background: white;
+  }
+
+  .container {
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+</style>
