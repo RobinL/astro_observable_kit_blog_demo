@@ -1,16 +1,76 @@
 ---
+import Notebook from '../components/Notebook';
 
+// Import from the workspace package!
+import * as DiffDemo from 'hello-world-diff-demo';
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Notebook Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@5/dist/inspector.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@observablehq/inputs@0.12.0/dist/inputs.css">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: white;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+        h3 {
+            margin-top: 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diff Match Patch Demo</h1>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Input 1</h3>
+            <div id="target-one"></div>
+        </div>
+        <div class="card">
+            <h3>Input 2</h3>
+            <div id="target-other"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Result</h3>
+        <div id="target-result"></div>
+    </div>
+
+    <!-- The Logic Island -->
+    <Notebook
+        client:only="react"
+        notebook={DiffDemo}
+        targets={{
+            "viewof one": "target-one",
+            "viewof other": "target-other",
+            "out": "target-result"
+        }}
+    />
+</body>
 </html>

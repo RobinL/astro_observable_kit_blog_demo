@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>hello-world-diff-demo</title>
+</head>
+<body>
+
+<script type="module">
+import {text} from "npm:@observablehq/inputs";
+export const viewof one = text({label: "Text 1", value: "Hello World"});
+</script>
+
+<script type="module">
+import {text} from "npm:@observablehq/inputs";
+export const viewof other = text({label: "Text 2", value: "Hello Observable"});
+</script>
+
+<script type="module">
+import {diff_match_patch} from "npm:diff-match-patch";
+
+export const out = (() => {
+  const dmp = new diff_match_patch();
+  const diffs = dmp.diff_main(one, other);
+  dmp.diff_cleanupSemantic(diffs);
+
+  const diffHtml = diffs.map(([op, text]) => {
+    const color = op === 1 ? 'green' : op === -1 ? 'red' : 'black';
+    const bg = op === 1 ? '#e6ffe6' : op === -1 ? '#ffe6e6' : 'transparent';
+    return `<span style="color: ${color}; background: ${bg}; padding: 2px 4px;">${text}</span>`;
+  }).join('');
+
+  return html`<div style="font-family: monospace; padding: 10px;">${diffHtml}</div>`;
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "hello-world-diff-demo",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.js",
+  "dependencies": {
+    "@observablehq/runtime": "^5.0.0",
+    "@observablehq/stdlib": "^5.0.0",
+    "@observablehq/inputs": "^0.12.0",
+    "@observablehq/inspector": "^5.0.0"
+  },
+  "scripts": {
+    "build": "tsx ../../notebook-builder/src/index.ts ./notebook.html --out ."
+  }
+}
