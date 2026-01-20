@@ -5,7 +5,7 @@
   <script id="1" type="text/markdown">
     # Hello, world! (diff-match-patch demo)
 
-    Type into the boxes to see a live
+    Woah this is pretty good!
   </script>
 
   <script id="2" type="module">
@@ -24,9 +24,7 @@
   </script>
 
 
-
-
-  <script id="4" type="module" output="diffResult">
+  <script id="4" type="module">
     import DiffMatchPatch from "diff-match-patch";
 
     const dmp = new DiffMatchPatch();
@@ -43,6 +41,13 @@
 
     display(out);
     display(`Levenshtein distance: ${dmp.diff_levenshtein(diffs)}`);
+  </script>
+
+  <script id="5" type="module" output="message">
+    import hello_world from "my-custom-lib";
+
+    const message = hello_world();
+    display(message);
   </script>
 
 </notebook>

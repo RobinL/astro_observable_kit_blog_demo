@@ -5,12 +5,14 @@
   "scripts": {
     "predev": "pnpm -s build:notebooks",
     "dev": "astro dev",
+    "dev:live": "concurrently -k -n NOTEBOOKS,ASTRO \"pnpm -s watch:notebooks\" \"astro dev\"",
     "start": "astro dev",
     "prebuild": "pnpm -s build:notebooks",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "build:notebooks": "pnpm --filter \"./packages/notebooks/*\" run build"
+    "build:notebooks": "pnpm --filter \"./packages/notebooks/*\" run build",
+    "watch:notebooks": "pnpm -r --filter \"./packages/notebooks/*\" run dev"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "concurrently": "^9.2.1",
     "notebook-to-lib": "workspace:*",
     "tsx": "^4.21.0",
     "typescript": "^5.7.3"

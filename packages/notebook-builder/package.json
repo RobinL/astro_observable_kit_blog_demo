@@ -8,12 +8,14 @@
   },
   "scripts": {
     "build": "tsc",
+    "prepare": "tsc",
     "dev": "tsc --watch",
     "test": "tsx bin/convert.ts test-notebooks/hello.html --out test-lib"
   },
   "dependencies": {
     "@observablehq/notebook-kit": "^1.5.1",
     "@sindresorhus/slugify": "^2.2.1",
+    "chokidar": "^3.6.0",
     "commander": "^11.1.0",
     "jsdom": "^24.0.0"
   },

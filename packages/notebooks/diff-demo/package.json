@@ -12,13 +12,15 @@
     "src"
   ],
   "scripts": {
-    "build": "tsx ../../notebook-builder/bin/convert.ts ./notebook.html --out ."
+    "build": "tsx ../../notebook-builder/bin/convert.ts ./notebook.html --out .",
+    "dev": "tsx ../../notebook-builder/bin/convert.ts ./notebook.html --out . --watch"
   },
   "dependencies": {
     "@observablehq/runtime": "^5.0.0",
     "@observablehq/inspector": "latest",
     "@observablehq/stdlib": "latest",
     "@observablehq/inputs": "latest",
+    "my-custom-lib": "workspace:*",
     "diff-match-patch": "latest"
   }
 }
