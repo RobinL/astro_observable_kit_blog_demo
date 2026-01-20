@@ -2,17 +2,15 @@ import { transpileJavaScript } from "@observablehq/notebook-kit";
 import { rewriteImports } from "./rewrite.js";
 
 export interface TranspiledCell {
-    id: string;            // from id attribute (canonical format)
-    index: number;         // 0-based stable index for fallback
-    output?: string;       // from output attribute (for targeting)
-    body: string;          // The function body
-    inputs: string[];      // Variables this cell needs
-    outputs: string[];     // Variables this cell defines (generation-time overrides)
+    id: number;
+    index: number;  // 0-based stable index for cell:<index> fallback
+    name?: string;
+    body: string;      // The function body
+    inputs: string[];  // Variables this cell needs
+    outputs: string[]; // Variables this cell defines (generation-time overrides)
     dependencies: Set<string>; // npm packages used
     dependencySpecs: Record<string, string>; // package -> version/range/tag (from npm: imports)
-    autodisplay: boolean;  // Whether to auto-display the cell's return value
-    usesDisplay: boolean;  // Whether the cell uses display() (needs shadow variable injection)
-    usesView: boolean;     // Whether the cell uses view() (needs shadow variable injection)
+    viewName?: string; // If set, this cell defines `viewof ${viewName}` and we should synthesize `${viewName}` via Generators.input
 }
 
 function escapeRegExp(value: string): string {
@@ -40,14 +38,24 @@ function dedent(text: string): string {
 }
 
 export function processCell(
-    id: string,
+    id: number,
     index: number,
     source: string,
     language: "js" | "markdown" | "html" | "tex",
-    output?: string
+    name?: string
 ): TranspiledCell {
 
     let jsSource = source;
+
+    // Detect notebook-kit view() usage before we rewrite it away.
+    // In notebook-kit HTML exports, form elements are typically wrapped as:
+    //   const <name> = view(Inputs.*(...))
+    // Semantically, this means the cell defines a *view* and the runtime should provide:
+    //   viewof <name>  -> the element
+    //   <name>         -> Generators.input(viewof <name>)
+    const isViewCell = Boolean(
+        name && new RegExp(`\\b(?:const|let|var)\\s+${escapeRegExp(name)}\\s*=\\s*view\\s*\\(`).test(source)
+    );
 
     // Convert non-JS blocks to template literals for the runtime
     // Dedent to remove HTML indentation that would otherwise create code blocks
@@ -57,8 +65,16 @@ export function processCell(
     } else if (language === "html") {
         const content = dedent(source);
         jsSource = `html\`${content.replace(/`/g, "\\`")}\``;
+    } else if (language === "js") {
+        // notebook-kit HTML exports rely on helper globals that aren't present in standard JS.
+        // We rewrite them away so the generated define.js becomes standard Observable Runtime code.
+        // - view(expr)    -> (expr)
+        // - display(expr) -> void (expr)
+        // The Runtime + Inspector will take care of display, and viewof/value is handled via Generators.input.
+        jsSource = jsSource
+            .replace(/\bview\s*\(/g, "(")
+            .replace(/\bdisplay\s*\(/g, "void (");
     }
-    // For JS: DO NOT rewrite view() or display() - they will be provided by shadow variables at runtime
 
     // 1. Rewrite imports (npm: -> bare) and collect deps
     const { cleanedSource, dependencies, dependencySpecs } = rewriteImports(jsSource);
@@ -69,33 +85,28 @@ export function processCell(
         resolveFiles: false
     });
 
-    // notebook-kit determines display/view needs by whether they appear in inputs.
-    const inputs = transpiled.inputs || [];
-    const usesDisplay = inputs.includes("display");
-    const usesView = inputs.includes("view");
-
-    // Build the outputs array (use notebook-kit's own declaration analysis).
-    // Note: notebook-kit’s view() helper does NOT imply `viewof ...` outputs; it returns a value-generator.
-    const outputs: string[] = transpiled.outputs && transpiled.outputs.length > 0 ? [...transpiled.outputs] : [];
-
-    // Determine autodisplay:
-    // - If cell uses display() or view(), autodisplay is false (explicit display calls handle rendering)
-    // - If cell has outputs (is a "program" with declarations), autodisplay is false
-    // - If cell is a simple expression (no outputs, no display/view), autodisplay is true
-    const hasDeclarations = outputs.length > 0;
-    const autodisplay = !usesDisplay && !usesView && !hasDeclarations;
+    // notebook-kit transpileJavaScript tends to over-report outputs for these HTML exports
+    // (e.g. it may include internal locals). Prefer the notebook's declared cell name.
+    const outputs: string[] = [];
+    let viewName: string | undefined;
+    if (name) {
+        if (isViewCell) {
+            viewName = name;
+            outputs.push(`viewof ${name}`);
+        } else {
+            outputs.push(name);
+        }
+    }
 
     return {
         id,
         index,
-        output,
+        name,
         body: transpiled.body,
-        inputs,
+        inputs: transpiled.inputs || [],
         outputs,
         dependencies,
         dependencySpecs,
-        autodisplay,
-        usesDisplay,
-        usesView
+        viewName
     };
 }

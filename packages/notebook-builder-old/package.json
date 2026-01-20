@@ -1,16 +1,9 @@
 {
-  "name": "notebook-to-lib",
+  "name": "@my-site/notebook-builder",
   "version": "1.0.0",
-  "description": "Convert Observable notebooks to standard JavaScript libraries",
+  "private": true,
   "type": "module",
-  "bin": {
-    "notebook-to-lib": "./dist/bin/convert.js"
-  },
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "test": "tsx bin/convert.ts test-notebooks/hello.html --out test-lib"
-  },
+  "main": "src/index.ts",
   "dependencies": {
     "@observablehq/notebook-kit": "^1.5.1",
     "@sindresorhus/slugify": "^2.2.1",
