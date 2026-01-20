@@ -1,8 +1,5 @@
 ---
-import Notebook from '../components/Notebook';
-
-// Import from the workspace package!
-import * as DiffDemo from 'hello-world-diff-demo';
+// No imports needed - we'll load everything client-side
 ---
 
 <html lang="en">
@@ -62,15 +59,41 @@ import * as DiffDemo from 'hello-world-diff-demo';
         <div id="target-result"></div>
     </div>
 
-    <!-- The Logic Island -->
-    <Notebook
-        client:only="react"
-        notebook={DiffDemo}
-        targets={{
-            "viewof one": "target-one",
-            "viewof other": "target-other",
-            "out": "target-result"
-        }}
-    />
+    <script>
+        // Astro will bundle this with Vite, resolving the import
+        import * as notebook from 'hello-world-diff-demo';
+
+        console.log('Notebook loaded:', notebook);
+        console.log('Keys:', Object.keys(notebook));
+
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', mountNotebook);
+        } else {
+            mountNotebook();
+        }
+
+        function mountNotebook() {
+            const targets = {
+                "one": document.getElementById("target-one"),
+                "other": document.getElementById("target-other"),
+                "out": document.getElementById("target-result")
+            };
+
+            try {
+                if (notebook.mount) {
+                    notebook.mount(document.body, {
+                        targets,
+                        appendUnmatched: false
+                    });
+                    console.log('Notebook mounted successfully');
+                } else {
+                    console.error('mount function not found in notebook');
+                }
+            } catch (err) {
+                console.error('Error mounting notebook:', err);
+            }
+        }
+    </script>
 </body>
 </html>

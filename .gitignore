@@ -1,3 +1,4 @@
+old_attempt/
 # build output
 dist/
 # generated types
@@ -5,6 +6,10 @@ dist/
 
 # dependencies
 node_modules/
+
+# generated notebook packages
+packages/notebooks/*/src/
+packages/notebooks/*/package.json
 
 # logs
 npm-debug.log*

@@ -262,7 +262,14 @@ export function generatePackageJson(
         description: "Converted Observable Notebook",
         type: "module",
         main: "src/index.js",
+        exports: {
+            ".": "./src/index.js"
+        },
+        sideEffects: false,
         files: ["src"],
+        scripts: {
+            build: "tsx ../../notebook-builder/src/index.ts ./notebook.html --out ."
+        },
         dependencies: depsObj
     }, null, 2);
 }

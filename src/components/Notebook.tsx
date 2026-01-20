@@ -1,38 +1,76 @@
-import React, { useEffect, useRef } from 'react';
-
-interface NotebookModule {
-  default: any;
-  Runtime: any;
-  Inspector: any;
-  createLibrary: () => any;
-}
+import React, { useEffect, useState } from 'react';
 
 interface Props {
-  notebook: NotebookModule;
+  moduleName: string;
   targets?: Record<string, string>; // Map Observable Names -> DOM IDs
 }
 
-export default function Notebook({ notebook, targets }: Props) {
-  const refs = useRef<Record<string, HTMLDivElement | null>>({});
+export default function Notebook({ moduleName, targets }: Props) {
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 1. Setup Runtime
-    const runtime = new notebook.Runtime(notebook.createLibrary());
+    let cleanup: (() => void) | undefined;
 
-    // 2. Define Module
-    runtime.module(notebook.default, (name: string) => {
-      // If we have a specific target mapping for this cell...
-      if (targets && targets[name]) {
-        const targetId = targets[name];
-        const el = document.getElementById(targetId);
-        if (el) return new notebook.Inspector(el);
+    const loadAndMount = async () => {
+      try {
+        // Dynamically import the notebook module on the client side only
+        const notebook = await import(/* @vite-ignore */ moduleName);
+
+        console.log('Notebook module loaded:', notebook);
+        console.log('Available keys:', Object.keys(notebook));
+
+        // Use the mount function if available
+        if (notebook.mount && targets) {
+          const targetElements: Record<string, Element> = {};
+          for (const [name, id] of Object.entries(targets)) {
+            const el = document.getElementById(id);
+            if (el) targetElements[name] = el;
+          }
+
+          const { runtime, main } = notebook.mount(document.body, {
+            targets: targetElements,
+            appendUnmatched: false
+          });
+
+          cleanup = () => runtime.dispose();
+          return;
+        }
+
+        // Fallback to manual setup
+        if (!notebook.Runtime || !notebook.createLibrary) {
+          setError('Missing Runtime or createLibrary in notebook module');
+          return;
+        }
+
+        const runtime = new notebook.Runtime(notebook.createLibrary());
+
+        runtime.module(notebook.default, (name: string) => {
+          if (targets && targets[name]) {
+            const targetId = targets[name];
+            const el = document.getElementById(targetId);
+            if (el) return new notebook.Inspector(el);
+          }
+
+          return true; // Run calculation but don't display
+        });
+
+        cleanup = () => runtime.dispose();
+      } catch (err) {
+        console.error('Failed to load notebook:', err);
+        setError(err instanceof Error ? err.message : String(err));
       }
+    };
 
-      return true; // Run calculation but don't display
-    });
+    loadAndMount();
 
-    return () => runtime.dispose();
-  }, [notebook, targets]);
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [moduleName, targets]);
 
-  return null; // This component manages DOM portals, it doesn't render itself
+  if (error) {
+    return <div style={{ color: 'red', padding: '20px' }}>Error loading notebook: {error}</div>;
+  }
+
+  return null;
 }

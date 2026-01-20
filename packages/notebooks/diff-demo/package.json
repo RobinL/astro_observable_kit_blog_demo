@@ -1,15 +1,24 @@
 {
   "name": "hello-world-diff-demo",
   "version": "0.1.0",
+  "description": "Converted Observable Notebook",
   "type": "module",
   "main": "src/index.js",
-  "dependencies": {
-    "@observablehq/runtime": "^5.0.0",
-    "@observablehq/stdlib": "^5.0.0",
-    "@observablehq/inputs": "^0.12.0",
-    "@observablehq/inspector": "^5.0.0"
+  "exports": {
+    ".": "./src/index.js"
   },
+  "sideEffects": false,
+  "files": [
+    "src"
+  ],
   "scripts": {
     "build": "tsx ../../notebook-builder/src/index.ts ./notebook.html --out ."
+  },
+  "dependencies": {
+    "@observablehq/runtime": "^5.0.0",
+    "@observablehq/inspector": "latest",
+    "@observablehq/stdlib": "latest",
+    "@observablehq/inputs": "latest",
+    "diff-match-patch": "latest"
   }
 }
