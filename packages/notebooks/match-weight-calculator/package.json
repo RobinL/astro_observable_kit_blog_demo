@@ -1,0 +1,24 @@
+{
+  "name": "match-weight-calculator",
+  "version": "0.1.0",
+  "description": "Converted Observable Notebook",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsx ../../notebook-builder/bin/convert.ts ./notebook.html --out .",
+    "dev": "tsx ../../notebook-builder/bin/convert.ts ./notebook.html --out . --watch"
+  },
+  "dependencies": {
+    "@observablehq/runtime": "^5.0.0",
+    "@observablehq/inspector": "latest",
+    "@observablehq/stdlib": "latest",
+    "@observablehq/inputs": "latest"
+  }
+}
