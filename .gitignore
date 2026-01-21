@@ -8,7 +8,7 @@ dist/
 node_modules/
 
 # generated notebook packages
-packages/notebooks/*/src/
+packages/notebooks/*/dist/
 packages/notebooks/*/package.json
 
 # logs
