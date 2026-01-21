@@ -28,4 +28,5 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-old_notebooks
+old_notebooks/**
+!old_notebooks/step_by_step.md
