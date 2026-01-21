@@ -7,5 +7,15 @@ import mdx from '@astrojs/mdx';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react(), mdx()]
+  integrations: [react(), mdx()],
+  vite: {
+    ssr: {
+      // Force bundling workspace packages instead of treating as external
+      noExternal: ['hello-world-diff-demo']
+    },
+    optimizeDeps: {
+      // Pre-bundle for faster dev server startup
+      include: ['hello-world-diff-demo']
+    }
+  }
 });

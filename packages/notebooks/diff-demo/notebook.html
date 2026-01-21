@@ -24,7 +24,7 @@
   </script>
 
 
-  <script id="4" type="module">
+  <script id="4" type="module" output="hi_there">
     import DiffMatchPatch from "diff-match-patch";
 
     const dmp = new DiffMatchPatch();
@@ -54,6 +54,7 @@
     import hello_from_top_level from "top-level-package-test";
 
     display(hello_from_top_level());
+    display(md`somemd`)
   </script>
 
 </notebook>

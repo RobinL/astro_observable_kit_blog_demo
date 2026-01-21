@@ -1,0 +1,17 @@
+---
+layout: ../layouts/BaseLayout.astro
+title: Observable Notebook Demo - Full Notebook
+---
+
+import ObservableNotebook from '../components/ObservableNotebook';
+
+# Observable Notebook Demo - Full Notebook
+
+Here's the notebook:
+
+<ObservableNotebook
+  client:load
+  notebookKey="hello-world-diff-demo"
+  cells={['one', 'other', 'hi_there', 'message', 'hello_from_top_level']}
+/>
+

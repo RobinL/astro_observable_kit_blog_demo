@@ -1,0 +1,42 @@
+---
+layout: ../layouts/BaseLayout.astro
+title: Observable Cells Demo - Interspersed with Markdown
+---
+
+import { ObservableCell, WithObservableProvider } from '../components/ObservableCells';
+
+# Observable Cells Demo - Interspersed with Markdown
+
+
+
+<WithObservableProvider client:load notebookKey="hello-world-diff-demo">
+
+## Here's some markdown from the mdx
+
+
+Before `<ObservableCell cellName="one" />`
+<ObservableCell cellName="one" />
+
+Between `<ObservableCell cellName="one" />` and `<ObservableCell cellName="other" />`
+
+<ObservableCell cellName="other" />
+
+After  `<ObservableCell cellName="other" />`
+
+### Diff Visualization
+
+Vis is here:
+
+<ObservableCell cellName="out" />
+
+
+More cells
+
+<ObservableCell cellName="message" />
+
+
+
+<ObservableCell cellName="hello_from_top_level" />
+
+</WithObservableProvider>
+
