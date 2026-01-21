@@ -14,8 +14,8 @@ export default defineConfig({
       noExternal: ['hello-world-diff-demo']
     },
     optimizeDeps: {
-      // Pre-bundle for faster dev server startup
-      include: ['hello-world-diff-demo']
+      // Exclude workspace packages from pre-bundling so changes are picked up
+      exclude: ['hello-world-diff-demo']
     }
   }
 });
