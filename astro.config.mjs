@@ -7,6 +7,8 @@ import mdx from '@astrojs/mdx';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://www.robinlinacre.com',
+  base: '/astro_observable_kit_blog_demo',
   integrations: [react(), mdx()],
   vite: {
     ssr: {
