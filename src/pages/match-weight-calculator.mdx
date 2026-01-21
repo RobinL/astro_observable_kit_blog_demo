@@ -3,17 +3,25 @@ layout: ../layouts/BaseLayout.astro
 title: Match weight calculator
 ---
 
-import ObservableNotebook from '../components/ObservableNotebook';
+import { ObservableCell, WithObservableProvider } from '../components/ObservableCells';
 
 # Match weight calculator
 
 A calculator for converting between match weights, probabilities, and Bayes factors.
 
-<ObservableNotebook
-	client:load
-	notebookKey="match-weight-calculator"
-	cells={["form_values", "calculated_values", "conversion_formulas"]}
-/>
+<WithObservableProvider client:load notebookKey="match-weight-calculator">
+
+<ObservableCell cellName="form_values" />
+
+<br />
+
+<ObservableCell cellName="calculated_values" />
+
+<br />
+
+<ObservableCell cellName="conversion_formulas" />
+
+</WithObservableProvider>
 
 ## Additional resources
 
