@@ -44,9 +44,9 @@ This project combines Astro's static site generation with Observable's notebook-
 
 ### 1. Notebook Conversion Pipeline
 
-Observable notebooks are exported as HTML files and converted into standard JavaScript libraries using the `notebook-builder` tool:
+Observable notebooks are authored as HTML files and the build process converts them into  standard JavaScript libraries using the custom `notebook-builder` tool:
 
-1. Export a notebook from Observable as HTML
+1. Write a notebook in Observable 20. `notebook-kit` format
 2. Place it in `packages/notebooks/<notebook-name>/notebook.html`
 3. Run the build script to convert it to a JavaScript library
 4. The converter generates:
