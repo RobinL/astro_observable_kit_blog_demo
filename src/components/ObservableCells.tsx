@@ -6,11 +6,12 @@ import React, {
     useState,
 } from 'react';
 import type { ReactNode } from 'react';
+import type { Runtime, Module } from '../types/observable';
 import { notebookRegistry, type NotebookKey } from '../lib/notebookRegistry';
 
 interface RuntimeContextValue {
-    runtime: any;
-    main: any;
+    runtime: Runtime;
+    main: Module;
 }
 
 const ObservableRuntimeContext = createContext<RuntimeContextValue | null>(null);
@@ -54,7 +55,7 @@ export function ObservableProvider({ notebookKey, children }: ObservableProvider
                 // Use the mount function from the notebook
                 const { runtime, main } = mount(tempContainer, {
                     appendUnmatched: false
-                });
+                }) as { runtime: Runtime; main: Module };
 
                 setRuntimeContext({ runtime, main });
 

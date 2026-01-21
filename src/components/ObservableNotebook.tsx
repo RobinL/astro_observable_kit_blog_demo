@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import type { Runtime } from '../types/observable';
 import { notebookRegistry, type NotebookKey } from '../lib/notebookRegistry';
 
 interface ObservableNotebookProps {
@@ -51,7 +52,7 @@ function ObservableNotebook({ notebookKey, cells, customClassName }: ObservableN
                 const { runtime } = mount(containerRef.current, {
                     targets,
                     appendUnmatched: false
-                });
+                }) as { runtime: Runtime };
 
                 cleanup = () => {
                     runtime.dispose();
