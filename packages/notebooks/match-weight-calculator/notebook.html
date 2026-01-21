@@ -184,7 +184,7 @@
         })
     </script>
 
-    <script id="7" type="module">
+    <script id="7" type="module" output="calculated_values">
         const calculated_values = md`
 
 **Match Weight:** ${formattedPartialMatchWeight}
@@ -199,10 +199,10 @@
 
 `;
 
-        ({ calculated_values })
+        display(calculated_values);
     </script>
 
-    <script id="8" type="module">
+    <script id="8" type="module" output="conversion_formulas">
         const texd = tex.options({
             displayMode: true,
             fleqn: true
@@ -226,6 +226,6 @@ ${texd`K = \frac{p}{1 - p}`}
 ${texd`\omega = \log_{2}(K) = \log_{2}\left(\frac{p}{1 - p}\right)`}
 `;
 
-        ({ conversion_formulas })
+        display(conversion_formulas);
     </script>
 </notebook>
