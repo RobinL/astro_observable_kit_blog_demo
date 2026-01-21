@@ -26,6 +26,9 @@ importers:
       hello-world-diff-demo:
         specifier: workspace:*
         version: link:packages/notebooks/diff-demo
+      match-weight-calculator:
+        specifier: workspace:*
+        version: link:packages/notebooks/match-weight-calculator
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -100,6 +103,21 @@ importers:
       top-level-package-test:
         specifier: workspace:*
         version: link:../../top-level-package-test
+
+  packages/notebooks/match-weight-calculator:
+    dependencies:
+      '@observablehq/inputs':
+        specifier: latest
+        version: 0.12.0
+      '@observablehq/inspector':
+        specifier: latest
+        version: 5.0.1
+      '@observablehq/runtime':
+        specifier: ^5.0.0
+        version: 5.9.9
+      '@observablehq/stdlib':
+        specifier: latest
+        version: 5.8.8
 
   packages/top-level-package-test: {}
 

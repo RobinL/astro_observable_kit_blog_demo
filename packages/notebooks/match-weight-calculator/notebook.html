@@ -1,0 +1,231 @@
+<!doctype html>
+<notebook theme="air">
+    <title>Match weight calculator</title>
+
+    <script id="1" type="text/markdown">
+    # Match weight calculator
+  </script>
+
+    <script id="2" type="module">
+        const form_values = view(
+            Inputs.form([
+                Inputs.number({
+                    label: "Numeric Input:",
+                    placeholder: "Enter a value",
+                    min: 0,
+                    required: true,
+                    value: 5.1,
+                    width: "100%"
+                }),
+                Inputs.select(
+                    [
+                        "Match Weight",
+                        "Probability (e.g., 0.5 for 50%)",
+                        "Bayes Factor",
+                        "Reciprocal Bayes Factor"
+                    ],
+                    {
+                        label: "Value type:",
+                        value: "Match Weight",
+                        width: "100%"
+                    }
+                )
+            ])
+        );
+
+        ({ form_values })
+    </script>
+
+    <script id="3" type="module">
+        const conversionUtils = {
+            partialMatchWeightToBayesFactor: (omega) => Math.pow(2, omega),
+
+            bayesFactorToProbability: (K) => K / (1 + K),
+
+            partialMatchWeightToProbability: function (omega) {
+                const K = this.partialMatchWeightToBayesFactor(omega);
+                return this.bayesFactorToProbability(K);
+            },
+
+            probabilityToBayesFactor: (p) => {
+                if (p === 1) return Infinity;
+                if (p === 0) return 0;
+                return p / (1 - p);
+            },
+
+            bayesFactorToPartialMatchWeight: (K) => Math.log2(K),
+
+            probabilityToPartialMatchWeight: function (p) {
+                const K = this.probabilityToBayesFactor(p);
+                return this.bayesFactorToPartialMatchWeight(K);
+            }
+        };
+
+        ({ conversionUtils })
+    </script>
+
+    <script id="4" type="module">
+        const numericValue = form_values[0];
+        const selectedOption = form_values[1];
+
+        ({ numericValue, selectedOption })
+    </script>
+
+    <script id="5" type="module">
+        let probability;
+        switch (selectedOption) {
+            case "Probability (e.g., 0.5 for 50%)":
+                probability = numericValue;
+                break;
+            case "Bayes Factor":
+                probability = conversionUtils.bayesFactorToProbability(numericValue);
+                break;
+            case "Match Weight":
+                probability = conversionUtils.partialMatchWeightToProbability(numericValue);
+                break;
+            case "Reciprocal Bayes Factor": {
+                const reciprocalK = 1 / numericValue;
+                probability = conversionUtils.bayesFactorToProbability(reciprocalK);
+                break;
+            }
+        }
+
+        let bayesFactor;
+        switch (selectedOption) {
+            case "Probability (e.g., 0.5 for 50%)":
+                bayesFactor = conversionUtils.probabilityToBayesFactor(numericValue);
+                break;
+            case "Bayes Factor":
+                bayesFactor = numericValue;
+                break;
+            case "Match Weight":
+                bayesFactor = conversionUtils.partialMatchWeightToBayesFactor(numericValue);
+                break;
+            case "Reciprocal Bayes Factor":
+                bayesFactor = 1 / numericValue;
+                break;
+        }
+
+        let partialMatchWeight;
+        switch (selectedOption) {
+            case "Probability (e.g., 0.5 for 50%)":
+                partialMatchWeight = conversionUtils.probabilityToPartialMatchWeight(numericValue);
+                break;
+            case "Bayes Factor":
+                partialMatchWeight = conversionUtils.bayesFactorToPartialMatchWeight(numericValue);
+                break;
+            case "Match Weight":
+                partialMatchWeight = numericValue;
+                break;
+            case "Reciprocal Bayes Factor": {
+                const reciprocalK = 1 / numericValue;
+                partialMatchWeight = conversionUtils.bayesFactorToPartialMatchWeight(reciprocalK);
+                break;
+            }
+        }
+
+        ({ probability, bayesFactor, partialMatchWeight })
+    </script>
+
+    <script id="6" type="module">
+        let multiple;
+        if (bayesFactor > 1) {
+            multiple = bayesFactor;
+        } else if (bayesFactor < 1) {
+            multiple = 1 / bayesFactor;
+        } else {
+            multiple = 1;
+        }
+
+        const formattedMultiple =
+            multiple < 100 ? multiple.toFixed(2) : multiple.toFixed(0);
+
+        let interpretation;
+        if (bayesFactor > 1) {
+            interpretation = `${formattedMultiple} times more likely`;
+        } else if (bayesFactor < 1) {
+            interpretation = `${formattedMultiple} times less likely`;
+        } else {
+            interpretation = "no more or less likely";
+        }
+
+        const absoluteInterpretation = 1 / (1 - probability);
+
+        const maxFractionDigits = Math.max(
+            5,
+            Math.round(Math.abs(partialMatchWeight) / 2)
+        );
+        const formattedProbability = probability.toLocaleString(undefined, {
+            maximumFractionDigits: maxFractionDigits
+        });
+
+        const formattedBayesFactor = bayesFactor.toLocaleString(undefined, {
+            maximumFractionDigits: 2
+        });
+
+        const formattedPartialMatchWeight = partialMatchWeight.toFixed(2);
+
+        const formattedAbsoluteInterpretation =
+            absoluteInterpretation < 2
+                ? absoluteInterpretation.toLocaleString(undefined, {
+                    maximumFractionDigits: 5
+                })
+                : absoluteInterpretation.toLocaleString(undefined, {
+                    maximumFractionDigits: 2
+                });
+
+        ({
+            interpretation,
+            absoluteInterpretation,
+            formattedProbability,
+            formattedBayesFactor,
+            formattedPartialMatchWeight,
+            formattedAbsoluteInterpretation
+        })
+    </script>
+
+    <script id="7" type="module">
+        const calculated_values = md`
+
+**Match Weight:** ${formattedPartialMatchWeight}
+
+**Probability:** ${formattedProbability}
+
+**Bayes Factor:** ${formattedBayesFactor}
+
+**Relative interpretation:** ${interpretation}
+
+**Absolute interpretation:** One error in each ${formattedAbsoluteInterpretation} predictions
+
+`;
+
+        ({ calculated_values })
+    </script>
+
+    <script id="8" type="module">
+        const texd = tex.options({
+            displayMode: true,
+            fleqn: true
+        });
+
+        const conversion_formulas = md`
+### Conversion Formulas:
+
+${texd`\text{Partial Match Weight} = \omega`}
+
+${texd`\text{Bayes Factor} = K`}
+
+${texd`\text{Probability} = p`}
+
+${texd`K = 2^{\omega}`}
+
+${texd`p = \frac{K}{1 + K} = \frac{2^{\omega}}{1 + 2^{\omega}}`}
+
+${texd`K = \frac{p}{1 - p}`}
+
+${texd`\omega = \log_{2}(K) = \log_{2}\left(\frac{p}{1 - p}\right)`}
+`;
+
+        ({ conversion_formulas })
+    </script>
+</notebook>

@@ -13,11 +13,11 @@ export default defineConfig({
   vite: {
     ssr: {
       // Force bundling workspace packages instead of treating as external
-      noExternal: ['hello-world-diff-demo']
+      noExternal: ['hello-world-diff-demo', 'match-weight-calculator']
     },
     optimizeDeps: {
       // Exclude workspace packages from pre-bundling so changes are picked up
-      exclude: ['hello-world-diff-demo']
+      exclude: ['hello-world-diff-demo', 'match-weight-calculator']
     }
   }
 });

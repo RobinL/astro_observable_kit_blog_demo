@@ -21,6 +21,7 @@
     "@types/react-dom": "^19.2.3",
     "astro": "^5.16.11",
     "hello-world-diff-demo": "workspace:*",
+    "match-weight-calculator": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },

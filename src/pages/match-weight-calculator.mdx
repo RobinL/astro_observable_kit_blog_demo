@@ -1,0 +1,28 @@
+---
+layout: ../layouts/BaseLayout.astro
+title: Match weight calculator
+---
+
+import { ObservableCell, WithObservableProvider } from '../components/ObservableCells';
+
+# Match weight calculator
+
+A calculator for converting between match weights, probabilities, and Bayes factors.
+
+<WithObservableProvider client:load notebookKey="match-weight-calculator">
+
+<ObservableCell cellName="form_values" />
+
+<br />
+
+<ObservableCell cellName="calculated_values" />
+
+<br />
+
+<ObservableCell cellName="conversion_formulas" />
+
+</WithObservableProvider>
+
+## Additional resources
+
+Also check the [interactive visualization](/prob_bf_mw/) for a graphical representation of how these values correspond to each other.
